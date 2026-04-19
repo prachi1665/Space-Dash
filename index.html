@@ -1,23 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Space Dash PRO</title>
+  <title>Space Dash PRO 🚀</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🚀 SPACE DASH PRO</h1>
-<h3>Score: <span id="score">0</span></h3>
+<div class="hud">
+  <div>Score: <span id="score">0</span></div>
+  <div>Level: <span id="level">1</span></div>
+</div>
 
 <div id="gameArea">
   <div id="stars"></div>
   <div id="player">🚀</div>
-  <div id="obstacle">☄️</div>
 </div>
 
-<button onclick="startGame()">START</button>
+<div class="controls">
+  <button onclick="shoot()">🔫</button>
+</div>
+
+<div id="gameOver">
+  <h1>💥 GAME OVER</h1>
+  <button onclick="restart()">Restart</button>
+</div>
 
 <script src="script.js"></script>
 </body>
