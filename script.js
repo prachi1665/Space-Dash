@@ -1,91 +1,124 @@
 let score = 0;
-let gameRunning = false;
+let level = 1;
+let gameRunning = true;
 
 let player = document.getElementById("player");
-let obstacle = document.getElementById("obstacle");
-let stars = document.getElementById("stars");
+let gameArea = document.getElementById("gameArea");
 
-let playerPos = 140;
-let obstaclePos = -40;
+let playerX = 140;
+let bullets = [];
+let enemies = [];
 
-// ⭐ CREATE STARS (IMPORTANT FIX)
+// 🌟 STARFIELD
 function createStars() {
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 50; i++) {
     let star = document.createElement("div");
     star.classList.add("star");
     star.style.left = Math.random() * 320 + "px";
     star.style.top = Math.random() * 520 + "px";
     star.style.animationDuration = (Math.random() * 3 + 2) + "s";
-    stars.appendChild(star);
+    gameArea.appendChild(star);
   }
 }
-
 createStars();
 
-// 🎮 CONTROL
-document.addEventListener("keydown", move);
-
-function move(e) {
-  if (!gameRunning) return;
-
-  if (e.key === "ArrowLeft" && playerPos > 0) playerPos -= 20;
-  if (e.key === "ArrowRight" && playerPos < 280) playerPos += 20;
-
-  player.style.left = playerPos + "px";
-}
-
-// 📱 TOUCH SUPPORT
-document.addEventListener("touchstart", (e) => {
-  if (!gameRunning) return;
-
+// 🚀 MOVE PLAYER (TOUCH)
+document.addEventListener("touchmove", (e) => {
   let x = e.touches[0].clientX;
-
-  if (x < window.innerWidth / 2 && playerPos > 0) {
-    playerPos -= 25;
-  } else {
-    playerPos += 25;
-  }
-
-  player.style.left = playerPos + "px";
+  playerX = x - 30;
+  player.style.left = playerX + "px";
 });
 
-// 🚀 START GAME
-function startGame() {
-  score = 0;
-  gameRunning = true;
+// 🔫 SHOOT
+function shoot() {
+  if (!gameRunning) return;
 
-  obstaclePos = -40;
-  obstacle.style.top = obstaclePos + "px";
+  let bullet = document.createElement("div");
+  bullet.classList.add("bullet");
+  bullet.style.left = playerX + "px";
+  bullet.style.bottom = "60px";
 
-  gameLoop();
+  gameArea.appendChild(bullet);
+  bullets.push(bullet);
 }
+
+// 👾 SPAWN ENEMY
+function spawnEnemy() {
+  let enemy = document.createElement("div");
+  enemy.classList.add("enemy");
+  enemy.innerText = "☄️";
+  enemy.style.left = Math.random() * 280 + "px";
+  enemy.style.top = "-40px";
+
+  gameArea.appendChild(enemy);
+  enemies.push(enemy);
+}
+
+setInterval(spawnEnemy, 1200);
 
 // 🔁 GAME LOOP
 function gameLoop() {
   if (!gameRunning) return;
 
-  obstaclePos += 6;
-  obstacle.style.top = obstaclePos + "px";
+  // bullets move
+  bullets.forEach((b, bi) => {
+    let bottom = parseInt(b.style.bottom);
+    b.style.bottom = bottom + 8 + "px";
 
-  // reset obstacle
-  if (obstaclePos > 520) {
-    obstaclePos = -40;
-    obstacle.style.left = Math.random() * 280 + "px";
-    score++;
-    document.getElementById("score").innerText = score;
-  }
+    if (bottom > 520) {
+      b.remove();
+      bullets.splice(bi, 1);
+    }
+  });
 
-  // collision
-  let obsX = parseInt(obstacle.style.left);
+  // enemies move
+  enemies.forEach((e, ei) => {
+    let top = parseInt(e.style.top);
+    e.style.top = top + 4 + "px";
 
-  if (
-    obstaclePos > 450 &&
-    Math.abs(playerPos - obsX) < 40
-  ) {
-    alert("💥 GAME OVER! Score: " + score);
-    gameRunning = false;
-    return;
-  }
+    // collision with player
+    if (top > 450 && Math.abs(parseInt(e.style.left) - playerX) < 40) {
+      endGame();
+    }
+
+    // bullet collision
+    bullets.forEach((b, bi) => {
+      let bBottom = parseInt(b.style.bottom);
+      if (
+        top > 400 &&
+        Math.abs(parseInt(e.style.left) - parseInt(b.style.left)) < 30 &&
+        bBottom > 400
+      ) {
+        e.remove();
+        b.remove();
+        enemies.splice(ei, 1);
+        bullets.splice(bi, 1);
+        score++;
+        document.getElementById("score").innerText = score;
+
+        if (score % 10 === 0) {
+          level++;
+          document.getElementById("level").innerText = level;
+        }
+      }
+    });
+
+    if (top > 520) {
+      e.remove();
+      enemies.splice(ei, 1);
+    }
+  });
 
   requestAnimationFrame(gameLoop);
 }
+
+function endGame() {
+  gameRunning = false;
+  document.getElementById("gameOver").style.display = "block";
+}
+
+function restart() {
+  location.reload();
+}
+
+gameLoop();
