@@ -2,31 +2,30 @@ body {
   margin: 0;
   font-family: Arial;
   background: radial-gradient(circle at top, #020617, #000);
+  overflow: hidden;
   color: white;
   text-align: center;
-  overflow: hidden;
+}
+
+.hud {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  font-size: 18px;
 }
 
 #gameArea {
   width: 320px;
   height: 520px;
-  margin: 20px auto;
-  border-radius: 15px;
+  margin: auto;
   position: relative;
   overflow: hidden;
-  background: #000;
+  background: black;
   border: 2px solid #00e5ff;
+  border-radius: 12px;
 }
 
-/* STARS BACKGROUND */
-#stars {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  overflow: hidden;
-}
-
+/* STARFIELD */
 .star {
   position: absolute;
   width: 2px;
@@ -47,24 +46,38 @@ body {
   bottom: 20px;
   left: 140px;
   font-size: 30px;
-  transition: 0.1s;
   filter: drop-shadow(0 0 10px cyan);
 }
 
-/* OBSTACLE */
-#obstacle {
+/* BULLETS */
+.bullet {
   position: absolute;
-  top: -40px;
-  left: 150px;
-  font-size: 28px;
-  filter: drop-shadow(0 0 10px red);
+  width: 4px;
+  height: 10px;
+  background: yellow;
+  border-radius: 2px;
 }
 
-/* BUTTON */
-button {
-  padding: 10px 20px;
-  background: #00e5ff;
-  border: none;
+/* ENEMY */
+.enemy {
+  position: absolute;
+  font-size: 26px;
+}
+
+/* GAME OVER */
+#gameOver {
+  display: none;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  padding: 20px;
   border-radius: 10px;
-  font-weight: bold;
+}
+
+.controls button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 18px;
 }
